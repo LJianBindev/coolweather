@@ -52,6 +52,9 @@ public class WeatherActivity extends AppCompatActivity {
     public DrawerLayout drawerLayout;
     private Button navButton;
 
+
+    public String weatherId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +87,6 @@ public class WeatherActivity extends AppCompatActivity {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String weatherString = prefs.getString("weather",null);
-        final String weatherId;
         if (weatherString != null){
             //有缓存时直接解析天气数据
             Weather weather = Utility.handleWeatherResponse(weatherString);
@@ -126,6 +128,7 @@ public class WeatherActivity extends AppCompatActivity {
 
         String weatherUrl = "http://guolin.tech/api/weather?cityid=" + weatherId +
                 "&key=3e7673d7185f4b16857fc2b89eae66d2";
+        this.weatherId = weatherId;//使滑动菜单中选中的城市id等于下拉刷新时的城市id
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {//发出请求
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -170,7 +173,7 @@ public class WeatherActivity extends AppCompatActivity {
      */
     private void showWeatherInfo(Weather weather){
         String cityName = weather.basic.cityName;
-        String updateTime = weather.basic.update.updateTime.split(" ")[1];
+        String updateTime = weather.basic.update.updateTime.split(" ")[1];//split(" ")将字符串以" "分割形成一个字符串数组，然后再通过索引[1]取出所得数组中的第二个元素的值
         String degree = weather.now.temperature + "℃";
         String weatherInfo = weather.now.more.info;
         titleCity.setText(cityName);
